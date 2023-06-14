@@ -10,6 +10,7 @@ import MovieRow from "@/components/MovieRow";
 
 function MovieDetailwithID({ params }) {
   const movieID = params.movieid.split("-")[0];
+  console.log(movieID);
   const { isLoading, isError, data, error } = useQuery(
     ["movieid", movieID],
     () => getMovieByID(movieID)
