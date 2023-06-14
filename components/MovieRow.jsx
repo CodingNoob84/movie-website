@@ -2,7 +2,7 @@
 import { getNowPlayingMovies } from "@/services/movies";
 import Image from "next/image";
 import { useQuery } from "react-query";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -37,6 +37,34 @@ function transformString(string, year) {
 
 function MovieRow({ title, movies }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  const [slidesToShow, setSlidesToShow] = useState(8);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
+      let calculatedSlidesToShow = 8; // Default number of slides to show
+      if (screenWidth < 400) {
+        calculatedSlidesToShow = 2; // Adjust the number of slides for smaller screens
+      } else if (screenWidth > 400 && screenWidth < 500) {
+        calculatedSlidesToShow = 3; // Adjust the number of slides for medium screens
+      } else if (screenWidth > 500 && screenWidth < 800) {
+        calculatedSlidesToShow = 4; // Adjust the number of slides for medium screens
+      }
+      setSlidesToShow(calculatedSlidesToShow);
+    };
+
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Initial calculation on component mount
+    handleResize();
+
+    // Clean up event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   const handleItemHover = (index) => {
     setHoveredIndex(index);
   };
@@ -72,7 +100,7 @@ function MovieRow({ title, movies }) {
           dots={false}
           infinite={true}
           speed={400}
-          slidesToShow={8}
+          slidesToShow={slidesToShow}
           slidesToScroll={1}
           ref={sliderRef}
           prevArrow={<></>}
